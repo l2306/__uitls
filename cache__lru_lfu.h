@@ -13,13 +13,13 @@ struct Node{
     K       key;
     T       data;
     short   hitCnt;      //次数
-    Node *prev, *next;
+    Node    *prev, *next;
 };
 
 template <class K, class T>
 class cache_LRU{
-    int maxSiz;		//设计容量
-	int curSiz;		//当前容量
+    int     maxSiz;		//设计容量
+    int     curSiz;		//当前容量
 public:
     cache_LRU(size_t size){
         entries_ = new Node<K,T>[size];
@@ -48,7 +48,7 @@ public:
             return T();
         }
     }
-	//添加新节点
+    //添加新节点
     void put(K key, T data){
         Node<K,T> *node = hashmap_[key];	//
         if(node){
@@ -93,13 +93,13 @@ private:
 
 template <class K, class T>
 class cache_LFU{
-    int maxSiz;		//设计容量
-	int curSiz;		//当前容量
+    int     maxSiz;		//设计容量
+    int     curSiz;		//当前容量
 public:
     cache_LFU(size_t size){
         entries_ = new Node<K,T>[size];
         for(int i=0; i<size; ++i)
-				entries_[i].hitCnt = 0;
+                entries_[i].hitCnt = 0;
         for(int i=0; i<size; ++i)
             free_entries_.push_back(entries_+i);
         head_ = new Node<K,T>;
@@ -136,7 +136,7 @@ public:
             return -1;
         }
     }
-	//添加新节点
+    //添加新节点
     void put(K key, T data){
         Node<K,T> *node = hashmap_[key];	//
         if(node){
@@ -157,7 +157,7 @@ public:
             attach(tail_->prev, node);			//添加到缓存
         }
     }
-	//增加频率 
+    //增加频率 
     void incr(K key){
         Node<K,T> *node = hashmap_[key];
         if(node){
@@ -178,8 +178,8 @@ public:
     }
     //减少频率
     void decr(K key){
-       Node<K,T>* node = hashmap_[key];
-       if(node && node>1){
+    Node<K,T>* node = hashmap_[key];
+    if(node && node>1){
             Node<K,T>* cursor = node;
             detach(node);
             node->hitCnt -= 1;
@@ -200,8 +200,8 @@ public:
     
     void expire(){
         //  过期时  不允许 其他操作
-        //应该定时清理不被使用的缓存     /*从后往前，这样调整中偏移最少*/
-        // 方法：计数右移 指数级递减，以减少最大数的影响程度
+        //  应该定时清理不被使用的缓存     /*从后往前，这样调整中偏移最少*/
+        //  方法：计数右移 指数级递减，以减少最大数的影响程度
         if(head_->next == tail_)
             return ;
         Node<K,T>* cursor = tail—>prev;
@@ -242,13 +242,13 @@ using namespace __gnu_cxx;
 namespace __gnu_cxx
 {
     template<> struct hash<const string> {
-    size_t operator()(const string& s) const 
+        size_t operator()(const string& s) const 
         { return hash<const char*>()( s.c_str() ); } //__stl_hash_string
-	};
-	template<> struct hash<string> {
+    };
+    template<> struct hash<string> {
         size_t operator()(const string& s) const 
         { return hash<const char*>()( s.c_str() ); } 
-	};
+    };
 }
 
 /*
@@ -263,19 +263,19 @@ int main()
     if(lru_cache.get(2) == "")
         lru_cache.put(2, "two");
     cout<<lru_cache.get(2)<<endl;
-
-	string  str1("one");
-	string  str2("two");
+    
+    string  str1("one");
+    string  str2("two");
     cache_LFU<string, string> lfu_cache(100);
     lfu_cache.put(str1, "one");
     cout<<lfu_cache.get(str1)<<endl;
     if(lfu_cache.get(str2) == "")
         lfu_cache.put(str2, "two");
-	cout<<lfu_cache.hitCnt(str2)<<endl;
+    cout<<lfu_cache.hitCnt(str2)<<endl;
     lfu_cache.incr(str2);
     cout<<lfu_cache.get(str2)<<" "<<endl;
-	cout<<lfu_cache.hitCnt(str2)<<endl;
-   
+    cout<<lfu_cache.hitCnt(str2)<<endl;
+    
     return 0;
 }
 */
